@@ -2,15 +2,22 @@
 using System.Collections.Concurrent;
 using Dister.Net.Communication.Message;
 using Dister.Net.Serialization;
+using Dister.Net.Service;
 
 namespace Dister.Net.Communication.Message
 {
     internal class MessageHandlers<T>
     {
         private readonly ConcurrentDictionary<string, MessageHandler<T>> handlers = new ConcurrentDictionary<string, MessageHandler<T>>();
-        //private readonly ConcurrentDictionary<string, Func<object, T, object>> handlers = new ConcurrentDictionary<string, Func<object, T, object>>();
-        internal ISerializer Serializer { get; set; }
+
+        public MessageHandlers(T service, ISerializer serializer)
+        {
+            Service = service;
+            Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+        }
+
         internal T Service { get; set; }
+        public ISerializer Serializer { get; set; }
 
         internal void Add(string topic, Type type, Func<object, T, object> handler)
         {

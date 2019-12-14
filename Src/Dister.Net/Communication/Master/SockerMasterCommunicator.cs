@@ -13,7 +13,7 @@ using Dister.Net.Serialization;
 
 namespace Dister.Net.Communication.Master
 {
-    public class SockerMasterCommunicator<T> : MasterCommunicator<T>
+    public class SockerMasterCommunicator<T> : Communicator<T>
     {
         readonly Socket listener;
         readonly ConcurrentBag<Socket> workerSockets = new ConcurrentBag<Socket>();
@@ -63,7 +63,7 @@ namespace Dister.Net.Communication.Master
         {
             while (workerSocket.IsOpen())
             {
-                var message = workerSocket.ReceiveMessagePacket(serializer);
+                var message = workerSocket.ReceiveMessagePacket(service.Serializer);
                 Task.Run(() => HandleMessage(message, workerSocket));
             }
             Console.WriteLine("Socket closed");//TODO: Change it later
@@ -72,11 +72,11 @@ namespace Dister.Net.Communication.Master
         {
             if (message.Type == MessageType.NoResponseRequest)
             {
-                Master.messageHandlers.Handle(message);
+                service.MessageHandlers.Handle(message);
             }
             else if(message.Type == MessageType.ResponseRequest)
             {
-                var result = Master.messageHandlers.Handle(message);
+                var result = service.MessageHandlers.Handle(message);
 
                 var response = new MessagePacket()
                 {
@@ -90,30 +90,42 @@ namespace Dister.Net.Communication.Master
                 else
                 {
                     response.Type = MessageType.Response;
-                    response.Content = serializer.Serialize(result);
+                    response.Content = service.Serializer.Serialize(result);
                 }
 
-                var data = response.ToDataString(serializer);
+                var data = response.ToDataString(service.Serializer);
                 Task.Run(() => workerSocket.SendAsync(data));
             }
         }
-        internal override void SendToAllWorkers(string topic, object o)
-        {
-            List<Task> listOfTasks = new List<Task>();
 
+        internal override void SendMessage(MessagePacket messagePacket)
+        {
             foreach (var socket in workerSockets)
             {
-                var content = new MessagePacket()
-                {
-                    Type = MessageType.NoResponseRequest,
-                    Topic = topic,
-                    Content = serializer.Serialize(o)
-                }.ToDataString(serializer);
-
-                listOfTasks.Add(socket.SendAsync(content));
+                Task.Run(() => socket.SendAsync(messagePacket.ToDataString(service.Serializer)));
             }
-
-            Task.WhenAll(listOfTasks);
         }
+        internal override TM GetResponse<TM>(MessagePacket messagePacket)
+        {
+            throw new NotImplementedException();
+        }
+        //internal override void SendMessage(string topic, object o)
+        //{
+        //    List<Task> listOfTasks = new List<Task>();
+
+        //    foreach (var socket in workerSockets)
+        //    {
+        //        var content = new MessagePacket()
+        //        {
+        //            Type = MessageType.NoResponseRequest,
+        //            Topic = topic,
+        //            Content = service.serializer.Serialize(o)
+        //        }.ToDataString(service.serializer);
+
+        //        listOfTasks.Add(socket.SendAsync(content));
+        //    }
+
+        //    Task.WhenAll(listOfTasks);
+        //}
     }
 }
