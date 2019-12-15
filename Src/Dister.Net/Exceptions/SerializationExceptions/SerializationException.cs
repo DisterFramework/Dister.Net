@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dister.Net.Exceptions.SerializationExceptions
 {
-    public class SerializationException : Exception
+    public class SerializationException : DisterException
     {
         public SerializationException(string message = "Serialization failed") : base(message)
         {

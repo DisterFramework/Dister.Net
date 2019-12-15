@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dister.Net.Exceptions.VariablesExceptions
+﻿namespace Dister.Net.Exceptions.VariablesExceptions
 {
-    public class NoneMaybeException : Exception
+    public class NoneMaybeException : DisterException
     {
         public NoneMaybeException(string message = "Tried to get value from None Maybe") : base(message)
         {

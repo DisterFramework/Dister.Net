@@ -2,7 +2,7 @@
 
 namespace Dister.Net.Exceptions.SerializationExceptions
 {
-    public class DeserializationException : Exception
+    public class DeserializationException : DisterException
     {
         public DeserializationException(string message = "Deserialization failed") : base(message)
         {

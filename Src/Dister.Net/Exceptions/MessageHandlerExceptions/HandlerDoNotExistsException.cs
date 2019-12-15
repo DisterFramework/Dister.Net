@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dister.Net.Exceptions.MessageHandlerExceptions
+﻿namespace Dister.Net.Exceptions.MessageHandlerExceptions
 {
-    public class HandlerDoNotExistsException : Exception
+    public class HandlerDoNotExistsException : DisterException
     {
         public HandlerDoNotExistsException(string message) : base(message)
         {
