@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Dister.Net.Exceptions.VariablesExceptions.DisterQueueExceptions;
+using Dister.Net.Exceptions.VariablesExceptions.DisterVariableExceptions;
 
 namespace Dister.Net.Variables.MasterStored
 {
@@ -26,12 +28,10 @@ namespace Dister.Net.Variables.MasterStored
                 if (queues[name].TryDequeue(out var result))
                     return (TV)result;
                 else
-                    throw new Exception();
+                    throw new EmptyQueueException($"Queue '{name}' is empty");
             }
             else
-            {
-                throw new KeyNotFoundException();
-            }
+                throw new QueueNotExistException($"Queue '{name}' doesn't exist");
         }
         internal override void Enqueue(string name, object value)
         {
@@ -40,9 +40,7 @@ namespace Dister.Net.Variables.MasterStored
                 queues[name].Enqueue(value);
             }
             else
-            {
-                throw new KeyNotFoundException();
-            }
+                throw new QueueNotExistException($"Queue '{name}' doesn't exist");
         }
 
         internal override TV GetDisterVariable<TV>(string name)
@@ -50,7 +48,7 @@ namespace Dister.Net.Variables.MasterStored
             if (variables.ContainsKey(name))
                 return (TV)variables[name];
             else
-                throw new KeyNotFoundException();
+                throw new VariableNotExistException($"Variable '{name}' doesn't exist");
         }
         internal override void SetDisterVariable(string name, object value) => variables.AddOrUpdate(name, value, (x, y) => value);
     }
