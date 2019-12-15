@@ -11,15 +11,15 @@ using Dister.Net.Communication.Message;
 using Dister.Net.Helpers;
 using Dister.Net.Serialization;
 
-namespace Dister.Net.Communication.Master
+namespace Dister.Net.Communication.SocketCommunicator
 {
-    public class SockerMasterCommunicator<T> : Communicator<T>
+    public class MasterSocketCommunicator<T> : Communicator<T>
     {
         readonly Socket listener;
         readonly ConcurrentBag<Socket> workerSockets = new ConcurrentBag<Socket>();
         readonly Thread acceptor;
 
-        public SockerMasterCommunicator()
+        public MasterSocketCommunicator()
         {
             listener = CreateListenerSocket();
             acceptor = CreateAcceptor();
@@ -39,13 +39,11 @@ namespace Dister.Net.Communication.Master
                 Name = "Acceptor"
             };
         }
-
         internal override void Start()
         {
             listener.Listen(2048);
             acceptor.Start();
         }
-
         private void AcceptConnections()
         {
             while (true)
@@ -63,27 +61,41 @@ namespace Dister.Net.Communication.Master
         {
             while (workerSocket.IsOpen())
             {
-                var message = workerSocket.ReceiveMessagePacket(service.Serializer);
+                MessagePacket message;
+                try
+                {
+                    message = workerSocket.ReceiveMessagePacket(service.Serializer);
+                }
+                catch (SocketException)
+                {
+                    break;
+                }
                 Task.Run(() => HandleMessage(message, workerSocket));
             }
             Console.WriteLine("Socket closed");//TODO: Change it later
         }
-        private void HandleMessage(MessagePacket message, Socket workerSocket)
+        private void HandleMessage(MessagePacket messagePacket, Socket workerSocket)
         {
-            if (message.Type == MessageType.NoResponseRequest)
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine(messagePacket.Id);
+            Console.WriteLine(messagePacket.Topic);
+            Console.WriteLine(messagePacket.Content);
+            Console.WriteLine(messagePacket.Type);
+
+            if (messagePacket.Type == MessageType.NoResponseRequest)
             {
-                service.MessageHandlers.Handle(message);
+                service.MessageHandlers.Handle(messagePacket);
             }
-            else if(message.Type == MessageType.ResponseRequest)
+            else if (messagePacket.Type == MessageType.ResponseRequest)
             {
-                var result = service.MessageHandlers.Handle(message);
+                var result = service.MessageHandlers.Handle(messagePacket);
 
                 var response = new MessagePacket()
                 {
-                    Id = message.Id
+                    Id = messagePacket.Id
                 };
 
-                if(result == null)
+                if (result == null)
                 {
                     response.Type = MessageType.NullResponse;
                 }
@@ -94,38 +106,40 @@ namespace Dister.Net.Communication.Master
                 }
 
                 var data = response.ToDataString(service.Serializer);
-                Task.Run(() => workerSocket.SendAsync(data));
+                workerSocket.Send(data);
+            }
+            else if (messagePacket.Type == MessageType.VariableSet)
+            {
+                service.DisterVariablesController.SetDisterVariable(messagePacket.Topic, service.Serializer.Deserialize<object>(messagePacket.Content));
+            }
+            else if (messagePacket.Type == MessageType.VariableGet)
+            {
+                var value = service.DisterVariablesController.GetDisterVariable<object>(messagePacket.Topic);
+
+                var response = new MessagePacket
+                {
+                    Id = messagePacket.Id,
+                    Topic = messagePacket.Topic,
+                    Content = service.Serializer.Serialize(value),
+                    Type = MessageType.Response
+                };
+                workerSocket.Send(response.ToDataString(service.Serializer));
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
-
         internal override void SendMessage(MessagePacket messagePacket)
         {
             foreach (var socket in workerSockets)
             {
-                Task.Run(() => socket.SendAsync(messagePacket.ToDataString(service.Serializer)));
+                socket.Send(messagePacket.ToDataString(service.Serializer));
             }
         }
         internal override TM GetResponse<TM>(MessagePacket messagePacket)
         {
             throw new NotImplementedException();
         }
-        //internal override void SendMessage(string topic, object o)
-        //{
-        //    List<Task> listOfTasks = new List<Task>();
-
-        //    foreach (var socket in workerSockets)
-        //    {
-        //        var content = new MessagePacket()
-        //        {
-        //            Type = MessageType.NoResponseRequest,
-        //            Topic = topic,
-        //            Content = service.serializer.Serialize(o)
-        //        }.ToDataString(service.serializer);
-
-        //        listOfTasks.Add(socket.SendAsync(content));
-        //    }
-
-        //    Task.WhenAll(listOfTasks);
-        //}
     }
 }

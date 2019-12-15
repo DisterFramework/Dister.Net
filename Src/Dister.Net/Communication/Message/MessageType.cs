@@ -5,6 +5,8 @@
         NoResponseRequest,
         ResponseRequest,
         Response,
-        NullResponse
+        NullResponse,
+        VariableSet,
+        VariableGet
     }
 }

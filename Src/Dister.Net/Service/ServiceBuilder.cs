@@ -4,6 +4,7 @@ using System.Text;
 using Dister.Net.Communication;
 using Dister.Net.Serialization;
 using Dister.Net.Communication.Message;
+using Dister.Net.Variables;
 
 namespace Dister.Net.Service
 {
@@ -12,6 +13,7 @@ namespace Dister.Net.Service
         readonly T service;
         Communicator<T> communicator;
         ISerializer serializer;
+        DisterVariablesController<T> disterVariablesController;
 
         public ServiceBuilder(T service)
         {
@@ -43,15 +45,29 @@ namespace Dister.Net.Service
             service.InLoop = inLoop;
             return this;
         }
+        public ServiceBuilder<T> WithDisterVariableController(DisterVariablesController<T> disterVariablesController)
+        {
+            this.disterVariablesController = disterVariablesController;
+            return this;
+        }
+        public ServiceBuilder<T> WithDisterVariable<TV>(string name, TV value = default)
+        {
+            disterVariablesController.SetDisterVariable(name, value);//TODO fix it
+            return this;
+        }
         public void Run()
         {
             service.Serializer = serializer;
             service.MessageHandlers = new MessageHandlers<T>(service, serializer);
             service.Communicator = communicator;
+            service.DisterVariablesController = disterVariablesController;
+
             communicator.service = service;
+            disterVariablesController.service = service;
 
             communicator.Start();
 
+            service.Run();
             while (service.InLoop)
                 service.Run();
         }

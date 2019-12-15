@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dister.Net.Communication.Message;
 using Dister.Net.Service;
+using Dister.Net.Variables;
 
 namespace Dister.Net.Communication
 {
@@ -11,6 +12,6 @@ namespace Dister.Net.Communication
         internal DisterService<T> service;
         internal abstract void Start();
         internal abstract void SendMessage(MessagePacket messagePacket);
-        internal abstract TM GetResponse<TM>(MessagePacket messagePacket) where TM : class;
+        internal abstract TM GetResponse<TM>(MessagePacket messagePacket);
     }
 }

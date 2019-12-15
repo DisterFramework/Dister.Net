@@ -10,16 +10,14 @@ namespace Dister.Net.Helpers
 {
     internal static class SocketHelpers
     {
-        internal static Task SendAsync(this Socket socket, string data) 
+        internal static Task Send(this Socket socket, string data) 
             => Task.Run(() => socket.Send(Encoding.UTF8.GetBytes(data)));
-        internal static void Send(this Socket socket, string data) 
-            => socket.Send(Encoding.UTF8.GetBytes(data));
         internal static bool IsOpen(this Socket s)
             => !((s.Poll(1000, SelectMode.SelectRead) && (s.Available == 0)) || !s.Connected);
 
         internal static string Receive(this Socket socket, int n)
         {
-            byte[] buffer = new byte[n];
+            var buffer = new byte[n];
             socket.Receive(buffer, 0, n, SocketFlags.None);
             return Encoding.UTF8.GetString(buffer);
         }

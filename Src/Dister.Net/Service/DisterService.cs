@@ -4,6 +4,7 @@ using System.Text;
 using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
 using Dister.Net.Serialization;
+using Dister.Net.Variables;
 
 namespace Dister.Net.Service
 {
@@ -13,7 +14,8 @@ namespace Dister.Net.Service
         internal ISerializer Serializer { get; set; }
         internal bool InLoop { get; set; }
         internal MessageHandlers<T> MessageHandlers { get; set; }
-
+        //internal DisterVariables DisterVariables { get; set; } = new DisterVariables();
+        internal DisterVariablesController<T> DisterVariablesController { get; set; }
         public abstract void Run();
         public void SendMessage(string topic, object o)
         {
@@ -35,5 +37,8 @@ namespace Dister.Net.Service
             };
             return Communicator.GetResponse<TM>(packet);
         }
+
+        public DisterVariable<TV, T> GetDisterVariable<TV>(string name)
+            => new DisterVariable<TV, T>(name, DisterVariablesController);
     }
 }
