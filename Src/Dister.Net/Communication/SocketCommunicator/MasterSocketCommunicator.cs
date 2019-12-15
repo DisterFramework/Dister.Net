@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Dister.Net.Communication.Message;
 using Dister.Net.Helpers;
 using Dister.Net.Serialization;
+using Dister.Net.Variables;
 
 namespace Dister.Net.Communication.SocketCommunicator
 {
@@ -117,14 +118,25 @@ namespace Dister.Net.Communication.SocketCommunicator
             else if (messagePacket.Type == MessageType.VariableGet)
             {
                 var value = service.DisterVariablesController.GetDisterVariable<object>(messagePacket.Topic);
-
-                var response = new MessagePacket
+                MessagePacket response;
+                if (value.IsSome)
                 {
-                    Id = messagePacket.Id,
-                    Topic = messagePacket.Topic,
-                    Content = service.Serializer.Serialize(value),
-                    Type = MessageType.Response
-                };
+                    response = new MessagePacket
+                    {
+                        Id = messagePacket.Id,
+                        Content = service.Serializer.Serialize(value.Value),
+                        Type = MessageType.Response
+                    };
+                }
+                else
+                {
+                    response = new MessagePacket
+                    {
+                        Id = messagePacket.Id,
+                        Type = MessageType.NullResponse
+                    };
+                }
+
                 workerSocket.Send(response.ToDataString(service.Serializer));
             }
             else if (messagePacket.Type == MessageType.Enqueue)
@@ -137,14 +149,25 @@ namespace Dister.Net.Communication.SocketCommunicator
             {
                 var name = messagePacket.Topic;
                 var value = service.DisterVariablesController.Dequeue<object>(name);
-
-                var response = new MessagePacket
+                MessagePacket response;
+                if(value.IsSome)
                 {
-                    Id = messagePacket.Id,
-                    Topic = messagePacket.Topic,
-                    Content = service.Serializer.Serialize(value),
-                    Type = MessageType.Response
-                };
+                    response = new MessagePacket
+                    {
+                        Id = messagePacket.Id,
+                        Content = service.Serializer.Serialize(value.Value),
+                        Type = MessageType.Response
+                    };
+                }
+                else
+                {
+                    response = new MessagePacket
+                    {
+                        Id = messagePacket.Id,
+                        Type = MessageType.NullResponse
+                    };
+                }
+
                 workerSocket.Send(response.ToDataString(service.Serializer));
             }
             else
@@ -159,7 +182,7 @@ namespace Dister.Net.Communication.SocketCommunicator
                 socket.Send(messagePacket.ToDataString(service.Serializer));
             }
         }
-        internal override TM GetResponse<TM>(MessagePacket messagePacket)
+        internal override Maybe<TM> GetResponse<TM>(MessagePacket messagePacket)
         {
             throw new NotImplementedException();
         }

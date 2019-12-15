@@ -8,7 +8,7 @@ namespace Dister.Net.Variables.MasterStored
         internal override void AddQueue(string name) => throw new System.NotImplementedException();
         internal override void AddQueue(string name, object[] values) => throw new NotImplementedException();
 
-        internal override TV Dequeue<TV>(string name)
+        internal override Maybe<TV> Dequeue<TV>(string name)
         {
             var packet = new MessagePacket
             {
@@ -28,7 +28,7 @@ namespace Dister.Net.Variables.MasterStored
             service.Communicator.SendMessage(packet);
         }
 
-        internal override TV GetDisterVariable<TV>(string name)
+        internal override Maybe<TV> GetDisterVariable<TV>(string name)
         {
             var packet = new MessagePacket
             {

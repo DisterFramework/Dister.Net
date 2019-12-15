@@ -9,9 +9,9 @@ namespace Dister.Net.Variables
     {
         internal DisterService<T> service;
         internal abstract void SetDisterVariable(string name, object value);
-        internal abstract TV GetDisterVariable<TV>(string name);
+        internal abstract Maybe<TV> GetDisterVariable<TV>(string name);
         internal abstract void Enqueue(string name, object value);
-        internal abstract TV Dequeue<TV>(string name);
+        internal abstract Maybe<TV> Dequeue<TV>(string name);
         internal abstract void AddQueue(string name);
         internal abstract void AddQueue(string name, object[] values);
     }

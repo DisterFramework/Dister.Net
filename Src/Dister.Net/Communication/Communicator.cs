@@ -12,6 +12,6 @@ namespace Dister.Net.Communication
         internal DisterService<T> service;
         internal abstract void Start();
         internal abstract void SendMessage(MessagePacket messagePacket);
-        internal abstract TM GetResponse<TM>(MessagePacket messagePacket);
+        internal abstract Maybe<TM> GetResponse<TM>(MessagePacket messagePacket);
     }
 }

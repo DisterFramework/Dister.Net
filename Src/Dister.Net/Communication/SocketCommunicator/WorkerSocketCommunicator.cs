@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Dister.Net.Communication.Message;
 using Dister.Net.Helpers;
+using Dister.Net.Variables;
 
 namespace Dister.Net.Communication.SocketCommunicator
 {
@@ -51,12 +52,12 @@ namespace Dister.Net.Communication.SocketCommunicator
         }
         internal override void SendMessage(MessagePacket messagePacket)
             => socket.Send(messagePacket.ToDataString(service.Serializer));
-        internal override TM GetResponse<TM>(MessagePacket messagePacket)
+        internal override Maybe<TM> GetResponse<TM>(MessagePacket messagePacket)
         {
             SendMessage(messagePacket);
             return GetFromResponses<TM>(messagePacket.Id);
         }
-        private TV GetFromResponses<TV>(string key)
+        private Maybe<TV> GetFromResponses<TV>(string key)
         {
             while (true)
             {
@@ -65,9 +66,9 @@ namespace Dister.Net.Communication.SocketCommunicator
                     responses.Remove(key, out var response);
 
                     if (response.Type == MessageType.NullResponse)
-                        throw new NullReferenceException();
+                        return Maybe<TV>.None();
                     else
-                        return service.Serializer.Deserialize<TV>(response.Content);
+                        return Maybe<TV>.Some(service.Serializer.Deserialize<TV>(response.Content));
                 }
             }
         }

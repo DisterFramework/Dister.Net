@@ -6,7 +6,7 @@
         {
         }
 
-        public TV Get() => disterVariablesController.GetDisterVariable<TV>(name);
+        public Maybe<TV> Get() => disterVariablesController.GetDisterVariable<TV>(name);
         public void Set(TV value) => disterVariablesController.SetDisterVariable(name, value);
     }
 }

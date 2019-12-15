@@ -6,7 +6,7 @@
         {
         }
 
-        public TV Dequeue() => disterVariablesController.Dequeue<TV>(name);
+        public Maybe<TV> Dequeue() => disterVariablesController.Dequeue<TV>(name);
         public void Enqueue(TV value) => disterVariablesController.Enqueue(name, value);
     }
 }

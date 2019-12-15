@@ -21,14 +21,14 @@ namespace Dister.Net.Variables.MasterStored
             }
         }
 
-        internal override TV Dequeue<TV>(string name)
+        internal override Maybe<TV> Dequeue<TV>(string name)
         {
             if (queues.ContainsKey(name))
             {
                 if (queues[name].TryDequeue(out var result))
-                    return (TV)result;
+                    return Maybe<TV>.Some((TV)result);
                 else
-                    throw new EmptyQueueException($"Queue '{name}' is empty");
+                    return Maybe<TV>.None();
             }
             else
                 throw new QueueNotExistException($"Queue '{name}' doesn't exist");
@@ -43,12 +43,12 @@ namespace Dister.Net.Variables.MasterStored
                 throw new QueueNotExistException($"Queue '{name}' doesn't exist");
         }
 
-        internal override TV GetDisterVariable<TV>(string name)
+        internal override Maybe<TV> GetDisterVariable<TV>(string name)
         {
             if (variables.ContainsKey(name))
-                return (TV)variables[name];
+                return Maybe<TV>.Some((TV)variables[name]);
             else
-                throw new VariableNotExistException($"Variable '{name}' doesn't exist");
+                return Maybe<TV>.None();
         }
         internal override void SetDisterVariable(string name, object value) => variables.AddOrUpdate(name, value, (x, y) => value);
     }

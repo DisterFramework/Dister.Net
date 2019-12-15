@@ -26,7 +26,7 @@ namespace Dister.Net.Service
             };
             Communicator.SendMessage(packet);
         }
-        public TM GetResponse<TM>(string topic, object o) where TM : class
+        public Maybe<TM> GetResponse<TM>(string topic, object o) where TM : class
         {
             var packet = new MessagePacket
             {
