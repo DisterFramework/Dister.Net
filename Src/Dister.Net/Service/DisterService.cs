@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.Concurrent;
 using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
+using Dister.Net.Exceptions;
+using Dister.Net.Exceptions.Handling;
 using Dister.Net.Serialization;
 using Dister.Net.Variables;
 
@@ -14,8 +15,30 @@ namespace Dister.Net.Service
         internal ISerializer Serializer { get; set; }
         internal bool InLoop { get; set; }
         internal MessageHandlers<T> MessageHandlers { get; set; }
+        internal ExceptionHanlders<T> ExceptionHanlders { get; set; } = new ExceptionHanlders<T>();
         internal DisterVariablesController<T> DisterVariablesController { get; set; }
         public abstract void Run();
+        internal void Start()
+        {
+            do
+            {
+                try
+                {
+                    Run();
+                }
+                catch (DisterException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    if (!ExceptionHanlders.Handle(ex))
+                    {
+                        throw;
+                    }
+                }
+            } while (InLoop);
+        }
         public void SendMessage(string topic, object o)
         {
             var packet = new MessagePacket

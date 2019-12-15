@@ -73,17 +73,22 @@ namespace Dister.Net.Service
             disterVariablesController.AddQueue(name, objects);
             return this;
         }
-        public ServiceBuilder<T> WithDisterDictionary<TK,TV>(string name)
+        public ServiceBuilder<T> WithDisterDictionary<TK, TV>(string name)
         {
             if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
             disterVariablesController.AddDictionary(name);
             return this;
         }
-        public ServiceBuilder<T> WithDisterDictionary<TK,TV>(string name, Dictionary<TK,TV> values)
+        public ServiceBuilder<T> WithDisterDictionary<TK, TV>(string name, Dictionary<TK, TV> values)
         {
             if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
             var dict = values.Select(x => new KeyValuePair<object, object>(x.Key, x.Value)).ToDictionary(x => x.Key, x => x.Value);
             disterVariablesController.AddDictionary(name, dict);
+            return this;
+        }
+        public ServiceBuilder<T> WithExceptionHandler<TE>(Action<Exception, T> handler) where TE : Exception
+        {
+            service.ExceptionHanlders.Add(typeof(TE), handler);
             return this;
         }
 
@@ -94,17 +99,15 @@ namespace Dister.Net.Service
             service.Communicator = communicator ?? throw new CommunicatorNotSetException();
             service.DisterVariablesController = disterVariablesController ?? throw new DisterVariableControllerNotSetException();
 
-
             service.MessageHandlers = new MessageHandlers<T>(service, serializer);
+            service.ExceptionHanlders.Service = service;
 
             communicator.service = service;
             disterVariablesController.service = service;
 
             communicator.Start();
 
-            service.Run();
-            while (service.InLoop)
-                service.Run();
+            service.Start();
         }
     }
 }
