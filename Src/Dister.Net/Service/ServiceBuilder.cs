@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Dister.Net.Communication;
-using Dister.Net.Serialization;
-using Dister.Net.Communication.Message;
-using Dister.Net.Variables;
 using System.Linq;
+using Dister.Net.Communication;
+using Dister.Net.Communication.Message;
+using Dister.Net.Exceptions.ServiceBuilderExceptions;
+using Dister.Net.Serialization;
+using Dister.Net.Variables;
 
 namespace Dister.Net.Service
 {
     public class ServiceBuilder<T> where T : DisterService<T>
     {
-        readonly T service;
-        Communicator<T> communicator;
-        ISerializer serializer;
-        DisterVariablesController<T> disterVariablesController;
+        private readonly T service;
+        private Communicator<T> communicator;
+        private ISerializer serializer;
+        private DisterVariablesController<T> disterVariablesController;
 
         public ServiceBuilder(T service)
         {
@@ -53,26 +52,35 @@ namespace Dister.Net.Service
         }
         public ServiceBuilder<T> WithDisterVariable<TV>(string name, TV value = default)
         {
+            if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
+
             disterVariablesController.SetDisterVariable(name, value);//TODO fix it
             return this;
         }
         public ServiceBuilder<T> WithDisterQueue<TV>(string name)
         {
+            if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
+
             disterVariablesController.AddQueue(name);
             return this;
         }
         public ServiceBuilder<T> WithDisterQueue<TV>(string name, TV[] values)
         {
+            if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
+
             var objects = values.Select(x => (object)x).ToArray();
             disterVariablesController.AddQueue(name, objects);
             return this;
         }
         public void Run()
         {
-            service.Serializer = serializer;
+
+            service.Serializer = serializer ?? throw new SerializerNotSetException();
+            service.Communicator = communicator ?? throw new CommunicatorNotSetException();
+            service.DisterVariablesController = disterVariablesController ?? throw new DisterVariableControllerNotSetException();
+
+
             service.MessageHandlers = new MessageHandlers<T>(service, serializer);
-            service.Communicator = communicator;
-            service.DisterVariablesController = disterVariablesController;
 
             communicator.service = service;
             disterVariablesController.service = service;
