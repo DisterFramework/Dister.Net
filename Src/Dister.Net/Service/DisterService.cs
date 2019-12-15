@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
-using Dister.Net.Exceptions;
 using Dister.Net.Exceptions.Handling;
 using Dister.Net.Serialization;
 using Dister.Net.Variables;
@@ -25,10 +23,6 @@ namespace Dister.Net.Service
                 try
                 {
                     Run();
-                }
-                catch (DisterException)
-                {
-                    throw;
                 }
                 catch (Exception ex)
                 {

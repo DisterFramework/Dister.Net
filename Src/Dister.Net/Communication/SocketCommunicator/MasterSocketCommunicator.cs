@@ -4,21 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dister.Net.Communication.Message;
+using Dister.Net.Exceptions.CommunicatorExceptions;
 using Dister.Net.Helpers;
-using Dister.Net.Serialization;
 using Dister.Net.Variables;
 
 namespace Dister.Net.Communication.SocketCommunicator
 {
     public class MasterSocketCommunicator<T> : Communicator<T>
     {
-        readonly Socket listener;
-        readonly ConcurrentBag<Socket> workerSockets = new ConcurrentBag<Socket>();
-        readonly Thread acceptor;
+        private readonly Socket listener;
+        private readonly ConcurrentBag<Socket> workerSockets = new ConcurrentBag<Socket>();
+        private readonly Thread acceptor;
 
         public MasterSocketCommunicator()
         {
@@ -49,7 +48,7 @@ namespace Dister.Net.Communication.SocketCommunicator
         {
             while (true)
             {
-                Socket workerSocket = listener.Accept();
+                var workerSocket = listener.Accept();
                 workerSockets.Add(workerSocket);
 
                 new Thread(() => ReceiveFromWorker(workerSocket))
@@ -73,16 +72,10 @@ namespace Dister.Net.Communication.SocketCommunicator
                 }
                 Task.Run(() => HandleMessage(message, workerSocket));
             }
-            Console.WriteLine("Socket closed");//TODO: Change it later
+            throw new ConnectionClosedException("Connecton to worker closed");
         }
         private void HandleMessage(MessagePacket messagePacket, Socket workerSocket)
         {
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine(messagePacket.Id);
-            Console.WriteLine(messagePacket.Topic);
-            Console.WriteLine(messagePacket.Content);
-            Console.WriteLine(messagePacket.Type);
-
             if (messagePacket.Type == MessageType.NoResponseRequest)
             {
                 service.MessageHandlers.Handle(messagePacket);
@@ -150,7 +143,7 @@ namespace Dister.Net.Communication.SocketCommunicator
                 var name = messagePacket.Topic;
                 var value = service.DisterVariablesController.Dequeue<object>(name);
                 MessagePacket response;
-                if(value.IsSome)
+                if (value.IsSome)
                 {
                     response = new MessagePacket
                     {
@@ -170,13 +163,13 @@ namespace Dister.Net.Communication.SocketCommunicator
 
                 workerSocket.Send(response.ToDataString(service.Serializer));
             }
-            else if(messagePacket.Type == MessageType.DictionarySet)
+            else if (messagePacket.Type == MessageType.DictionarySet)
             {
                 var kvPair = service.Serializer.Deserialize<KeyValuePair<object, object>>(messagePacket.Content);
                 var name = messagePacket.Topic;
                 service.DisterVariablesController.SetInDictionary(name, kvPair.Key, kvPair.Value);
             }
-            else if(messagePacket.Type == MessageType.DictionaryGet)
+            else if (messagePacket.Type == MessageType.DictionaryGet)
             {
                 var key = service.Serializer.Deserialize<object>(messagePacket.Content);
                 var name = messagePacket.Topic;
@@ -215,9 +208,6 @@ namespace Dister.Net.Communication.SocketCommunicator
                 socket.Send(messagePacket.ToDataString(service.Serializer));
             }
         }
-        internal override Maybe<TM> GetResponse<TM>(MessagePacket messagePacket)
-        {
-            throw new NotImplementedException();
-        }
+        internal override Maybe<TM> GetResponse<TM>(MessagePacket messagePacket) => throw new NotImplementedException();
     }
 }

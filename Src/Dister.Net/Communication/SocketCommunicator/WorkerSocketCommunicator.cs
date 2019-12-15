@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Dister.Net.Communication.Message;
+using Dister.Net.Exceptions.CommunicatorExceptions;
 using Dister.Net.Helpers;
 using Dister.Net.Variables;
 
@@ -35,7 +36,7 @@ namespace Dister.Net.Communication.SocketCommunicator
                     service.MessageHandlers.Handle(message);
                 }
             }
-            Console.WriteLine("Socket closed");//TODO change it
+            throw new ConnectionClosedException("Connection to master closed");
         }
         internal override void Start()
         {
