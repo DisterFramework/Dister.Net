@@ -14,5 +14,9 @@ namespace Dister.Net.Variables
         internal abstract Maybe<TV> Dequeue<TV>(string name);
         internal abstract void AddQueue(string name);
         internal abstract void AddQueue(string name, object[] values);
+        internal abstract void AddDictionary(string name);
+        internal abstract void AddDictionary(string name, Dictionary<object,object> values);
+        internal abstract Maybe<TV> GetFromDictionary<TV>(string name, object key);
+        internal abstract void SetInDictionary(string name, object key, object value);
     }
 }

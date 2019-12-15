@@ -23,5 +23,8 @@ namespace Dister.Net.Variables
         public bool IsNone => Content.Length == 0;
 
         public T Value => IsSome ? Content.First() : throw new NoneMaybeException();
+
+        public static implicit operator Maybe<T>(T x)
+            => Some(x);
     }
 }

@@ -37,9 +37,11 @@ namespace Dister.Net.Service
             return Communicator.GetResponse<TM>(packet);
         }
 
-        public DisterVariable<TV, T> GetDisterVariable<TV>(string name)
+        public DisterVariable<TV, T> DisterVariable<TV>(string name)
             => new DisterVariable<TV, T>(name, DisterVariablesController);
-        public DisterQueue<TV, T> GetDisterQueue<TV>(string name)
+        public DisterQueue<TV, T> DisterQueue<TV>(string name)
             => new DisterQueue<TV, T>(name, DisterVariablesController);
+        public DisterDictionary<TK, TV, T> DisterDictionary<TK, TV>(string name)
+            => new DisterDictionary<TK, TV, T>(name, DisterVariablesController);
     }
 }

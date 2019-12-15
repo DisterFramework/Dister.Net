@@ -9,6 +9,8 @@
         VariableSet,
         VariableGet,
         Enqueue,
-        Dequeue
+        Dequeue,
+        DictionaryGet,
+        DictionarySet
     }
 }

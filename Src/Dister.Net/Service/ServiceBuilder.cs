@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
@@ -72,6 +73,20 @@ namespace Dister.Net.Service
             disterVariablesController.AddQueue(name, objects);
             return this;
         }
+        public ServiceBuilder<T> WithDisterDictionary<TK,TV>(string name)
+        {
+            if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
+            disterVariablesController.AddDictionary(name);
+            return this;
+        }
+        public ServiceBuilder<T> WithDisterDictionary<TK,TV>(string name, Dictionary<TK,TV> values)
+        {
+            if (disterVariablesController == null) throw new DisterVariableControllerNotSetException();
+            var dict = values.Select(x => new KeyValuePair<object, object>(x.Key, x.Value)).ToDictionary(x => x.Key, x => x.Value);
+            disterVariablesController.AddDictionary(name, dict);
+            return this;
+        }
+
         public void Run()
         {
 

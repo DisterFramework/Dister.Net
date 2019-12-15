@@ -170,6 +170,39 @@ namespace Dister.Net.Communication.SocketCommunicator
 
                 workerSocket.Send(response.ToDataString(service.Serializer));
             }
+            else if(messagePacket.Type == MessageType.DictionarySet)
+            {
+                var kvPair = service.Serializer.Deserialize<KeyValuePair<object, object>>(messagePacket.Content);
+                var name = messagePacket.Topic;
+                service.DisterVariablesController.SetInDictionary(name, kvPair.Key, kvPair.Value);
+            }
+            else if(messagePacket.Type == MessageType.DictionaryGet)
+            {
+                var key = service.Serializer.Deserialize<object>(messagePacket.Content);
+                var name = messagePacket.Topic;
+                var value = service.DisterVariablesController.GetFromDictionary<object>(name, key);
+
+                MessagePacket response;
+                if (value.IsSome)
+                {
+                    response = new MessagePacket
+                    {
+                        Id = messagePacket.Id,
+                        Content = service.Serializer.Serialize(value.Value),
+                        Type = MessageType.Response
+                    };
+                }
+                else
+                {
+                    response = new MessagePacket
+                    {
+                        Id = messagePacket.Id,
+                        Type = MessageType.NullResponse
+                    };
+                }
+
+                workerSocket.Send(response.ToDataString(service.Serializer));
+            }
             else
             {
                 throw new NotImplementedException();
