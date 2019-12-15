@@ -110,11 +110,33 @@ namespace Dister.Net.Communication.SocketCommunicator
             }
             else if (messagePacket.Type == MessageType.VariableSet)
             {
-                service.DisterVariablesController.SetDisterVariable(messagePacket.Topic, service.Serializer.Deserialize<object>(messagePacket.Content));
+                var name = messagePacket.Topic;
+                var value = service.Serializer.Deserialize<object>(messagePacket.Content);
+                service.DisterVariablesController.SetDisterVariable(name, value);
             }
             else if (messagePacket.Type == MessageType.VariableGet)
             {
                 var value = service.DisterVariablesController.GetDisterVariable<object>(messagePacket.Topic);
+
+                var response = new MessagePacket
+                {
+                    Id = messagePacket.Id,
+                    Topic = messagePacket.Topic,
+                    Content = service.Serializer.Serialize(value),
+                    Type = MessageType.Response
+                };
+                workerSocket.Send(response.ToDataString(service.Serializer));
+            }
+            else if (messagePacket.Type == MessageType.Enqueue)
+            {
+                var name = messagePacket.Topic;
+                var value = service.Serializer.Deserialize<object>(messagePacket.Content);
+                service.DisterVariablesController.Enqueue(name, value);
+            }
+            else if (messagePacket.Type == MessageType.Dequeue)
+            {
+                var name = messagePacket.Topic;
+                var value = service.DisterVariablesController.Dequeue<object>(name);
 
                 var response = new MessagePacket
                 {

@@ -14,7 +14,6 @@ namespace Dister.Net.Service
         internal ISerializer Serializer { get; set; }
         internal bool InLoop { get; set; }
         internal MessageHandlers<T> MessageHandlers { get; set; }
-        //internal DisterVariables DisterVariables { get; set; } = new DisterVariables();
         internal DisterVariablesController<T> DisterVariablesController { get; set; }
         public abstract void Run();
         public void SendMessage(string topic, object o)
@@ -40,5 +39,7 @@ namespace Dister.Net.Service
 
         public DisterVariable<TV, T> GetDisterVariable<TV>(string name)
             => new DisterVariable<TV, T>(name, DisterVariablesController);
+        public DisterQueue<TV, T> GetDisterQueue<TV>(string name)
+            => new DisterQueue<TV, T>(name, DisterVariablesController);
     }
 }

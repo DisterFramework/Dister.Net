@@ -5,6 +5,7 @@ using Dister.Net.Communication;
 using Dister.Net.Serialization;
 using Dister.Net.Communication.Message;
 using Dister.Net.Variables;
+using System.Linq;
 
 namespace Dister.Net.Service
 {
@@ -53,6 +54,17 @@ namespace Dister.Net.Service
         public ServiceBuilder<T> WithDisterVariable<TV>(string name, TV value = default)
         {
             disterVariablesController.SetDisterVariable(name, value);//TODO fix it
+            return this;
+        }
+        public ServiceBuilder<T> WithDisterQueue<TV>(string name)
+        {
+            disterVariablesController.AddQueue(name);
+            return this;
+        }
+        public ServiceBuilder<T> WithDisterQueue<TV>(string name, TV[] values)
+        {
+            var objects = values.Select(x => (object)x).ToArray();
+            disterVariablesController.AddQueue(name, objects);
             return this;
         }
         public void Run()

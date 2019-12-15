@@ -7,6 +7,8 @@
         Response,
         NullResponse,
         VariableSet,
-        VariableGet
+        VariableGet,
+        Enqueue,
+        Dequeue
     }
 }
