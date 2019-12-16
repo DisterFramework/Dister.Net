@@ -11,13 +11,7 @@ namespace Dister.Net.Communication.Message
     {
         private readonly ConcurrentDictionary<string, MessageHandler<T>> handlers = new ConcurrentDictionary<string, MessageHandler<T>>();
         internal T Service { get; set; }
-        public ISerializer Serializer { get; set; }
-
-        public MessageHandlers(T service, ISerializer serializer)
-        {
-            Service = service;
-            Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-        }
+        internal DisterService<T> DService { get; set; }
 
         internal void Add(string topic, Type type, Func<object, T, object> handler)
         {
@@ -27,7 +21,7 @@ namespace Dister.Net.Communication.Message
         internal object Handle(MessagePacket message)
         {
             if (handlers.ContainsKey(message.Topic))
-                return handlers[message.Topic].Handle(Serializer, message.Content, Service);
+                return handlers[message.Topic].Handle(DService.Serializer, message.Content, Service);
             else
                 throw new HandlerDoNotExistsException($"No existing handler for topic: '{message.Topic}'");
         }

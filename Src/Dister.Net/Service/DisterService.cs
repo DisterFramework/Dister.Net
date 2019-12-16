@@ -12,7 +12,7 @@ namespace Dister.Net.Service
         internal Communicator<T> Communicator { get; set; }
         internal ISerializer Serializer { get; set; }
         internal bool InLoop { get; set; }
-        internal MessageHandlers<T> MessageHandlers { get; set; }
+        internal MessageHandlers<T> MessageHandlers { get; set; } = new MessageHandlers<T>();
         internal ExceptionHanlders<T> ExceptionHanlders { get; set; } = new ExceptionHanlders<T>();
         internal DisterVariablesController<T> DisterVariablesController { get; set; }
         public abstract void Run();

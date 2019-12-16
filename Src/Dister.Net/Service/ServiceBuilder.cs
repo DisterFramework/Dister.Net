@@ -98,8 +98,9 @@ namespace Dister.Net.Service
             service.Serializer = serializer ?? throw new SerializerNotSetException();
             service.Communicator = communicator ?? throw new CommunicatorNotSetException();
             service.DisterVariablesController = disterVariablesController ?? throw new DisterVariableControllerNotSetException();
-
-            service.MessageHandlers = new MessageHandlers<T>(service, serializer);
+            service.MessageHandlers.Service = service;
+            service.MessageHandlers.DService = service;
+            service.MessageHandlers.Service = service;
             service.ExceptionHanlders.Service = service;
 
             communicator.service = service;
