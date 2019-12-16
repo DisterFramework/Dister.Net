@@ -1,8 +1,8 @@
-﻿using Dister.Net.Communication.Message;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Dister.Net.Communication.Message;
 
-namespace Dister.Net.Variables.MasterStored
+namespace Dister.Net.Variables.DiserVariables.MasterStored
 {
     public class WorkerMasterStoredDisterVariableController<T> : DisterVariablesController<T>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dister.Net.Communication.Message;
 using Dister.Net.Service;
-using Dister.Net.Variables;
+using Dister.Net.Variables.DiserVariables;
 
 namespace Dister.Net.Communication
 {

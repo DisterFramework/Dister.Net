@@ -5,7 +5,7 @@ using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
 using Dister.Net.Exceptions.ServiceBuilderExceptions;
 using Dister.Net.Serialization;
-using Dister.Net.Variables;
+using Dister.Net.Variables.DiserVariables;
 
 namespace Dister.Net.Service
 {

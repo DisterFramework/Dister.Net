@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Dister.Net.Exceptions.VariablesExceptions;
 
-namespace Dister.Net.Variables
+namespace Dister.Net.Variables.DiserVariables
 {
     public class Maybe<T>
     {

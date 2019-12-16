@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Dister.Net.Communication.Message;
 using Dister.Net.Exceptions.CommunicatorExceptions;
 using Dister.Net.Helpers;
-using Dister.Net.Variables;
+using Dister.Net.Variables.DiserVariables;
 
 namespace Dister.Net.Communication.SocketCommunicator
 {

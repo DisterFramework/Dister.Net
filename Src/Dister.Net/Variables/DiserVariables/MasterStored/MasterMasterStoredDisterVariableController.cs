@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Dister.Net.Exceptions.VariablesExceptions.DisterQueueExceptions;
 
-namespace Dister.Net.Variables.MasterStored
+namespace Dister.Net.Variables.DiserVariables.MasterStored
 {
     public class MasterMasterStoredDisterVariableController<T> : DisterVariablesController<T>
     {

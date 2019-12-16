@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dister.Net.Variables
+namespace Dister.Net.Variables.DiserVariables
 {
     public abstract class DisterVariableBase<TV, TS>
     {

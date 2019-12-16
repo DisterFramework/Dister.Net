@@ -1,4 +1,4 @@
-﻿namespace Dister.Net.Variables
+﻿namespace Dister.Net.Variables.DiserVariables
 {
     public class DisterVariable<TV, TS> : DisterVariableBase<TV, TS>
     {
