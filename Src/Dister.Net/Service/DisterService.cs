@@ -2,6 +2,7 @@
 using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
 using Dister.Net.Exceptions.Handling;
+using Dister.Net.Logs;
 using Dister.Net.Serialization;
 using Dister.Net.Variables.DiserVariables;
 
@@ -15,6 +16,7 @@ namespace Dister.Net.Service
         internal MessageHandlers<T> MessageHandlers { get; set; } = new MessageHandlers<T>();
         internal ExceptionHanlders<T> ExceptionHanlders { get; set; } = new ExceptionHanlders<T>();
         internal DisterVariablesController<T> DisterVariablesController { get; set; }
+        public LogAggregator<T> LogAggregator { get; internal set; }
         public abstract void Run();
         internal void Start()
         {

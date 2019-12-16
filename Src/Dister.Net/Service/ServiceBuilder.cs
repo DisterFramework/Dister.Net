@@ -4,6 +4,7 @@ using System.Linq;
 using Dister.Net.Communication;
 using Dister.Net.Communication.Message;
 using Dister.Net.Exceptions.ServiceBuilderExceptions;
+using Dister.Net.Logs;
 using Dister.Net.Serialization;
 using Dister.Net.Variables.DiserVariables;
 
@@ -89,6 +90,12 @@ namespace Dister.Net.Service
         public ServiceBuilder<T> WithExceptionHandler<TE>(Action<Exception, T> handler) where TE : Exception
         {
             service.ExceptionHanlders.Add(typeof(TE), handler);
+            return this;
+        }
+        public ServiceBuilder<T> WithLogAggregator(LogAggregator<T> logAggregator)
+        {
+            service.LogAggregator = logAggregator;
+            logAggregator.service = service;
             return this;
         }
 
