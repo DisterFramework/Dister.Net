@@ -2,6 +2,10 @@
 
 namespace Dister.Net.Logs
 {
+    /// <summary>
+    /// Base LogAggregator
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="DisterService{T}"/></typeparam>
     public abstract class LogAggregator<T>
     {
         internal DisterService<T> service;

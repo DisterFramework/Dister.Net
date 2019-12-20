@@ -11,6 +11,7 @@
         Enqueue,
         Dequeue,
         DictionaryGet,
-        DictionarySet
+        DictionarySet,
+        Log
     }
 }

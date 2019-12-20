@@ -12,6 +12,10 @@ using Dister.Net.Variables.DiserVariables;
 
 namespace Dister.Net.Communication.SocketCommunicator
 {
+    /// <summary>
+    /// Worker's client of SocketCommunicator
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="Service.DisterService{T}"/></typeparam>
     public class WorkerSocketCommunicator<T> : Communicator<T>
     {
         private readonly string masterHostname;
@@ -73,6 +77,5 @@ namespace Dister.Net.Communication.SocketCommunicator
                 }
             }
         }
-
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Dister.Net.Exceptions.SerializationExceptions;
 using Newtonsoft.Json;
 
 namespace Dister.Net.Serialization
 {
+    /// <summary>
+    /// Serializer that uses <see cref="Newtonsoft.Json "/> library to serialize and deserilize objects
+    /// </summary>
     public class JsonSerializer : ISerializer
     {
         public T Deserialize<T>(string s)
@@ -19,7 +20,6 @@ namespace Dister.Net.Serialization
                 throw new DeserializationException(ex);
             }
         }
-
         public object Deserialize(string s, Type type)
         {
             try
@@ -31,7 +31,6 @@ namespace Dister.Net.Serialization
                 throw new DeserializationException(ex);
             }
         }
-
         public string Serialize(object o)
         {
             try

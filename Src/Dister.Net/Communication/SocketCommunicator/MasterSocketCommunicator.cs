@@ -9,10 +9,15 @@ using System.Threading.Tasks;
 using Dister.Net.Communication.Message;
 using Dister.Net.Exceptions.CommunicatorExceptions;
 using Dister.Net.Helpers;
+using Dister.Net.Logs;
 using Dister.Net.Variables.DiserVariables;
 
 namespace Dister.Net.Communication.SocketCommunicator
 {
+    /// <summary>
+    /// Master's client of SocketCommunicator
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="Service.DisterService{T}"/></typeparam>
     public class MasterSocketCommunicator<T> : Communicator<T>
     {
         private readonly Socket listener;
@@ -195,6 +200,11 @@ namespace Dister.Net.Communication.SocketCommunicator
                 }
 
                 workerSocket.Send(response.ToDataString(service.Serializer));
+            }
+            else if (messagePacket.Type == MessageType.Log)
+            {
+                var log = service.Serializer.Deserialize<Log>(messagePacket.Content);
+                service.LogAggregator?.Log(log);
             }
             else
             {

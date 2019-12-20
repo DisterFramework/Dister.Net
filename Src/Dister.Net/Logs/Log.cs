@@ -14,7 +14,6 @@ namespace Dister.Net.Logs
             LogLevel = logLevel;
             Message = message ?? throw new ArgumentNullException(nameof(message));
         }
-
         public Log()
         {
         }

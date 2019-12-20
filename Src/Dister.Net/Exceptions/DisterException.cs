@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace Dister.Net.Exceptions
 {
+    /// <summary>
+    /// Base DisterException
+    /// </summary>
     public class DisterException : Exception
     {
         public DisterException()

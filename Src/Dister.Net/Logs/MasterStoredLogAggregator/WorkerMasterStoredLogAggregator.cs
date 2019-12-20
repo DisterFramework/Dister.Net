@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using Dister.Net.Communication.Message;
+﻿using Dister.Net.Communication.Message;
 
 namespace Dister.Net.Logs.MasterStoredLogAggregator
 {
+    /// <summary>
+    /// Workers's client of MasterStoredLogAggregator
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="Service.DisterService{T}"/></typeparam>
     public class WorkerMasterStoredLogAggregator<T> : LogAggregator<T>
     {
         public override void Log(LogLevel logLevel, int eventId, object message)
