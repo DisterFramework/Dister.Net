@@ -30,14 +30,14 @@ namespace Dister.Net.Communication.SocketCommunicator
         {
             while (socket.IsOpen())
             {
-                var message = socket.ReceiveMessagePacket(service.Serializer);
+                var message = socket.ReceiveMessagePacket(disterService.Serializer);
                 if (message.Type == MessageType.Response || message.Type == MessageType.NullResponse)
                 {
                     responses.AddOrUpdate(message.Id, message, (x, y) => message);
                 }
                 else if (message.Type == MessageType.NoResponseRequest)
                 {
-                    service.MessageHandlers.Handle(message);
+                    disterService.MessageHandlers.Handle(message);
                 }
             }
             throw new ConnectionClosedException("Connection to master closed");
@@ -56,7 +56,7 @@ namespace Dister.Net.Communication.SocketCommunicator
             }.Start();
         }
         internal override void SendMessage(MessagePacket messagePacket)
-            => socket.Send(messagePacket.ToDataString(service.Serializer));
+            => socket.Send(messagePacket.ToDataString(disterService.Serializer));
         internal override Maybe<TM> GetResponse<TM>(MessagePacket messagePacket)
         {
             SendMessage(messagePacket);
@@ -73,7 +73,7 @@ namespace Dister.Net.Communication.SocketCommunicator
                     if (response.Type == MessageType.NullResponse)
                         return Maybe<TV>.None();
                     else
-                        return Maybe<TV>.Some(service.Serializer.Deserialize<TV>(response.Content));
+                        return Maybe<TV>.Some(disterService.Serializer.Deserialize<TV>(response.Content));
                 }
             }
         }

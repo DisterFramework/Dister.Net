@@ -13,7 +13,7 @@ namespace Dister.Net.Variables.DiserVariables.MasterStored
                 Topic = name,
                 Type = MessageType.VariableGet
             };
-            return service.Communicator.GetResponse<TV>(packet);
+            return disterService.Communicator.GetResponse<TV>(packet);
         }
         internal override void SetDisterVariable(string name, object value)
         {
@@ -21,9 +21,9 @@ namespace Dister.Net.Variables.DiserVariables.MasterStored
             {
                 Topic = name,
                 Type = MessageType.VariableSet,
-                Content = service.Serializer.Serialize(value)
+                Content = disterService.Serializer.Serialize(value)
             };
-            service.Communicator.SendMessage(packet);
+            disterService.Communicator.SendMessage(packet);
         }
 
         internal override void AddQueue(string name) => throw new NotImplementedException();
@@ -35,17 +35,17 @@ namespace Dister.Net.Variables.DiserVariables.MasterStored
                 Topic = name,
                 Type = MessageType.Dequeue
             };
-            return service.Communicator.GetResponse<TV>(packet);
+            return disterService.Communicator.GetResponse<TV>(packet);
         }
         internal override void Enqueue(string name, object value)
         {
             var packet = new MessagePacket
             {
                 Topic = name,
-                Content = service.Serializer.Serialize(value),
+                Content = disterService.Serializer.Serialize(value),
                 Type = MessageType.Enqueue
             };
-            service.Communicator.SendMessage(packet);
+            disterService.Communicator.SendMessage(packet);
         }
 
         internal override void AddDictionary(string name) => throw new NotImplementedException();
@@ -55,20 +55,20 @@ namespace Dister.Net.Variables.DiserVariables.MasterStored
             var packet = new MessagePacket
             {
                 Topic = name,
-                Content = service.Serializer.Serialize(key),
+                Content = disterService.Serializer.Serialize(key),
                 Type = MessageType.DictionaryGet
             };
-            return service.Communicator.GetResponse<TV>(packet);
+            return disterService.Communicator.GetResponse<TV>(packet);
         }
         internal override void SetInDictionary(string name, object key, object value)
         {
             var packet = new MessagePacket
             {
                 Topic = name,
-                Content = service.Serializer.Serialize(new KeyValuePair<object, object>(key, value)),
+                Content = disterService.Serializer.Serialize(new KeyValuePair<object, object>(key, value)),
                 Type = MessageType.DictionarySet
             };
-            service.Communicator.SendMessage(packet);
+            disterService.Communicator.SendMessage(packet);
         }
     }
 }

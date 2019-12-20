@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using Dister.Net.Exceptions.MessageHandlerExceptions;
+using Dister.Net.Modules;
 using Dister.Net.Service;
 
 namespace Dister.Net.Communication.Message
@@ -9,20 +10,12 @@ namespace Dister.Net.Communication.Message
     /// Contains message handlers and service info
     /// </summary>
     /// <typeparam name="T">Type of <see cref="DisterService{T}"/></typeparam>
-    internal class MessageHandlers<T>
+    internal class MessageHandlers<T> : Module<T>
     {
         /// <summary>
         /// Dictionary of message handlers
         /// </summary>
         private readonly ConcurrentDictionary<string, MessageHandler<T>> handlers = new ConcurrentDictionary<string, MessageHandler<T>>();
-        /// <summary>
-        /// Service class that will be passed to handler
-        /// </summary>
-        internal T Service { get; set; }
-        /// <summary>
-        /// DisterService that provides <see cref="Serialization.ISerializer"/>
-        /// </summary>
-        internal DisterService<T> DService { get; set; }
 
         /// <summary>
         /// Adds new message handler
@@ -43,7 +36,7 @@ namespace Dister.Net.Communication.Message
         internal object Handle(MessagePacket message)
         {
             if (handlers.ContainsKey(message.Topic))
-                return handlers[message.Topic].Handle(DService.Serializer, message.Content, Service);
+                return handlers[message.Topic].Handle(disterService.Serializer, message.Content, service);
             else
                 throw new HandlerDoNotExistsException($"No existing handler for topic: '{message.Topic}'");
         }

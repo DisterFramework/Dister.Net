@@ -10,13 +10,13 @@ namespace Dister.Net.Logs.MasterStoredLogAggregator
     {
         public override void Log(LogLevel logLevel, int eventId, object message)
         {
-            var log = new Log(eventId, logLevel, service.Serializer.Serialize(message));
+            var log = new Log(eventId, logLevel, disterService.Serializer.Serialize(message));
             var packet = new MessagePacket
             {
-                Content = service.Serializer.Serialize(log),
+                Content = disterService.Serializer.Serialize(log),
                 Type = MessageType.Log
             };
-            service.Communicator.SendMessage(packet);
+            disterService.Communicator.SendMessage(packet);
         }
     }
 }

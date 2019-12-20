@@ -1,4 +1,5 @@
-﻿using Dister.Net.Service;
+﻿using Dister.Net.Modules;
+using Dister.Net.Service;
 
 namespace Dister.Net.Logs
 {
@@ -6,9 +7,8 @@ namespace Dister.Net.Logs
     /// Base LogAggregator
     /// </summary>
     /// <typeparam name="T">Type of <see cref="DisterService{T}"/></typeparam>
-    public abstract class LogAggregator<T>
+    public abstract class LogAggregator<T> : Module<T>
     {
-        internal DisterService<T> service;
         public abstract void Log(LogLevel logLevel, int eventId, object message);
         public void Log(Log log) => Log(log.LogLevel, log.EventId, log.Message);
         public void LogDebug(int eventId, object message) => Log(LogLevel.Debug, eventId, message);

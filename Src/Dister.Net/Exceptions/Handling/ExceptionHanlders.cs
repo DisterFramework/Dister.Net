@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dister.Net.Modules;
 
 namespace Dister.Net.Exceptions.Handling
 {
-    internal class ExceptionHanlders<T>
+    internal class ExceptionHanlders<T> : Module<T>
     {
         private readonly Dictionary<Type, ExceptionHandler<T>> handlers = new Dictionary<Type, ExceptionHandler<T>>();
-        internal T Service { get; set; }
 
         internal void Add(Type type, Action<Exception, T> handler)
         {
@@ -17,7 +17,7 @@ namespace Dister.Net.Exceptions.Handling
         {
             if (handlers.ContainsKey(exception.GetType()))
             {
-                handlers[exception.GetType()].Handle(exception, Service);
+                handlers[exception.GetType()].Handle(exception, service);
                 return true;
             }
             return false;

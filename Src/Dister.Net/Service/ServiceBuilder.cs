@@ -4,6 +4,7 @@ using System.Linq;
 using Dister.Net.Communication;
 using Dister.Net.Exceptions.ServiceBuilderExceptions;
 using Dister.Net.Logs;
+using Dister.Net.Modules;
 using Dister.Net.Serialization;
 using Dister.Net.Variables.DiserVariables;
 
@@ -15,6 +16,7 @@ namespace Dister.Net.Service
         private Communicator<T> communicator;
         private ISerializer serializer;
         private DisterVariablesController<T> disterVariablesController;
+        private readonly List<Module<T>> modules = new List<Module<T>>();
 
         /// <summary>
         /// Creates <see cref="DisterService{T}"/> of type T
@@ -23,6 +25,8 @@ namespace Dister.Net.Service
         public ServiceBuilder(T service)
         {
             this.service = service ?? throw new ArgumentNullException(nameof(service));
+            modules.Add(service.ExceptionHanlders);
+            modules.Add(service.MessageHandlers);
         }
         /// <summary>
         /// Adds Serializer to <see cref="DisterService{T}"/>
@@ -42,6 +46,7 @@ namespace Dister.Net.Service
         public ServiceBuilder<T> WithCommunicator(Communicator<T> communicator)
         {
             this.communicator = communicator;
+            modules.Add(communicator);
             return this;
 
         }
@@ -87,6 +92,7 @@ namespace Dister.Net.Service
         public ServiceBuilder<T> WithDisterVariableController(DisterVariablesController<T> disterVariablesController)
         {
             this.disterVariablesController = disterVariablesController;
+            modules.Add(disterVariablesController);
             return this;
         }
         /// <summary>
@@ -178,7 +184,17 @@ namespace Dister.Net.Service
         public ServiceBuilder<T> WithLogAggregator(LogAggregator<T> logAggregator)
         {
             service.LogAggregator = logAggregator;
-            logAggregator.service = service;
+            modules.Add(logAggregator);
+            return this;
+        }
+        /// <summary>
+        /// Adds module to DisterService
+        /// </summary>
+        /// <param name="module">Module instance</param>
+        /// <returns></returns>
+        public ServiceBuilder<T> WithModule(Module<T> module)
+        {
+            modules.Add(module);
             return this;
         }
         /// <summary>
@@ -186,19 +202,16 @@ namespace Dister.Net.Service
         /// </summary>
         public void Run()
         {
-
             service.Serializer = serializer ?? throw new SerializerNotSetException();
             service.Communicator = communicator ?? throw new CommunicatorNotSetException();
             service.DisterVariablesController = disterVariablesController ?? throw new DisterVariableControllerNotSetException();
-            service.MessageHandlers.Service = service;
-            service.MessageHandlers.DService = service;
-            service.MessageHandlers.Service = service;
-            service.ExceptionHanlders.Service = service;
 
-            communicator.service = service;
-            disterVariablesController.service = service;
-
-            communicator.Start();
+            foreach (var module in modules)
+            {
+                module.service = service;
+                module.disterService = service;
+                module.Start();
+            }
 
             service.Start();
         }

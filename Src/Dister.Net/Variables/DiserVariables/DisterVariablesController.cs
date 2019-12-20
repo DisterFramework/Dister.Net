@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using Dister.Net.Modules;
 using Dister.Net.Service;
 
 namespace Dister.Net.Variables.DiserVariables
 {
-    public abstract class DisterVariablesController<T>
+    public abstract class DisterVariablesController<T> : Module<T>
     {
-        internal DisterService<T> service;
         internal abstract void SetDisterVariable(string name, object value);
         internal abstract Maybe<TV> GetDisterVariable<TV>(string name);
         internal abstract void Enqueue(string name, object value);
