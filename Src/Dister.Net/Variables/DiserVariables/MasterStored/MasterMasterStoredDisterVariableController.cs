@@ -29,7 +29,11 @@ namespace Dister.Net.Variables.DiserVariables.MasterStored
             if (queues.ContainsKey(name))
             {
                 if (queues[name].TryDequeue(out var result))
-                    return Maybe<TV>.Some((TV)result);
+                {
+                    var serialized = disterService.Serializer.Serialize(result);
+                    return Maybe<TV>.Some(disterService.Serializer.Deserialize<TV>(serialized));
+
+                }
                 else
                     return Maybe<TV>.None();
             }
