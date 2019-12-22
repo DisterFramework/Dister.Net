@@ -206,6 +206,35 @@ namespace Dister.Net.Communication.SocketCommunicator
                 var log = disterService.Serializer.Deserialize<Log>(messagePacket.Content);
                 disterService.LogAggregator?.Log(log);
             }
+            else if (messagePacket.Type == MessageType.WorkChunkRequest)
+            {
+                var name = messagePacket.Topic;
+                var id = messagePacket.Id;
+                var result = disterService.WorkChunkGenerators.Generete<object>(name, id);
+                MessagePacket response;
+                if(result.IsNone)
+                {
+                    response = new MessagePacket
+                    {
+                        Id = id,
+                        Type = MessageType.NullResponse
+                    };
+                }
+                else
+                {
+                    response = new MessagePacket
+                    {
+                        Id = id,
+                        Type = MessageType.Response,
+                        Content = disterService.Serializer.Serialize(result.Value)
+                    };
+                }
+                workerSocket.Send(response.ToDataString(disterService.Serializer));
+            }
+            else if(messagePacket.Type == MessageType.WorkChunkResponse)
+            {
+                disterService.WorkChunkGenerators.HandleResponse(messagePacket.Topic, messagePacket.Id, messagePacket.Content);
+            }
             else
             {
                 throw new NotImplementedException();

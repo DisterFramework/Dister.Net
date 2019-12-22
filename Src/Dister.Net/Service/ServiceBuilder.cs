@@ -27,6 +27,7 @@ namespace Dister.Net.Service
             this.service = service ?? throw new ArgumentNullException(nameof(service));
             modules.Add(service.ExceptionHanlders);
             modules.Add(service.MessageHandlers);
+            modules.Add(service.WorkChunkGenerators);
         }
         /// <summary>
         /// Adds Serializer to <see cref="DisterService{T}"/>
@@ -198,6 +199,30 @@ namespace Dister.Net.Service
             return this;
         }
         /// <summary>
+        /// Adds WorkChunk generator to DisterService
+        /// </summary>
+        /// <typeparam name="TV">Request type</typeparam>
+        /// <typeparam name="TR">Response type</typeparam>
+        /// <param name="name">Generator name</param>
+        /// <param name="generator">Generator function</param>
+        /// <param name="responseHandler">Response handler</param>
+        /// <returns></returns>
+        public ServiceBuilder<T> WithWorkChunkGenerator<TV, TR>(string name, Func<T, Maybe<TV>> generator, Action<TR, T> responseHandler)
+        {
+            service.WorkChunkGenerators.Add(
+                name, 
+                (s) => 
+                { 
+                    var v = generator(s);
+                    if (v.IsNone) return Maybe<object>.None(); 
+                    else return Maybe<object>.Some(v.Value); 
+                }, 
+                (r,s) => responseHandler((TR)r,s), 
+                typeof(TR));
+
+            return this;
+        }
+        /// <summary>
         /// Starts DisterService
         /// </summary>
         public void Run()
@@ -214,6 +239,9 @@ namespace Dister.Net.Service
             }
 
             service.Start();
+        /// <summary>
+        /// Starts DisterService
+        /// </summary>
         }
     }
 }

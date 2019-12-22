@@ -12,6 +12,8 @@
         Dequeue,
         DictionaryGet,
         DictionarySet,
-        Log
+        Log,
+        WorkChunkRequest,
+        WorkChunkResponse
     }
 }

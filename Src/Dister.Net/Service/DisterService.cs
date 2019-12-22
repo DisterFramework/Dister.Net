@@ -5,6 +5,7 @@ using Dister.Net.Exceptions.Handling;
 using Dister.Net.Logs;
 using Dister.Net.Serialization;
 using Dister.Net.Variables.DiserVariables;
+using Dister.Net.WorkChunks;
 
 namespace Dister.Net.Service
 {
@@ -19,6 +20,7 @@ namespace Dister.Net.Service
         internal bool InLoop { get; set; }
         internal MessageHandlers<T> MessageHandlers { get; set; } = new MessageHandlers<T>();
         internal ExceptionHanlders<T> ExceptionHanlders { get; set; } = new ExceptionHanlders<T>();
+        internal WorkChunkGenerators<T> WorkChunkGenerators { get; set; } = new WorkChunkGenerators<T>();
         internal DisterVariablesController<T> DisterVariablesController { get; set; }
         public LogAggregator<T> LogAggregator { get; internal set; }
 
@@ -99,5 +101,23 @@ namespace Dister.Net.Service
         /// <returns>Handler to dictionary</returns>
         public DisterDictionary<TK, TV, T> DisterDictionary<TK, TV>(string name)
             => new DisterDictionary<TK, TV, T>(name, DisterVariablesController);
+        public Maybe<WorkChunk<T, TV>> GetWorkChunk<TV>(string name)
+        {
+            var packet = new MessagePacket
+            {
+                Topic = name,
+                Type = MessageType.WorkChunkRequest
+            };
+            var response = Communicator.GetResponse<TV>(packet);
+            if (response.IsNone) return Maybe<WorkChunk<T, TV>>.None();
+            var workChunk = new WorkChunk<T, TV>
+            {
+                Id = packet.Id,
+                disterService = this,
+                Value = response.Value,
+                Name = name
+            };
+            return Maybe<WorkChunk<T,TV>>.Some(workChunk);
+        }
     }
 }
