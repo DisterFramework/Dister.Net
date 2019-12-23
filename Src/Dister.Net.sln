@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.89
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dister.Net", "Dister.Net\Dister.Net.csproj", "{C25BF401-069D-486F-9BB9-0FAA84787B2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWorker", "TestWorker\TestWorker.csproj", "{91676C7F-76A1-4ECD-BB8D-69CBDE6F1728}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMaster", "TestMaster\TestMaster.csproj", "{5AE04959-4219-4859-A0B4-B70ACC2C3A6C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C25BF401-069D-486F-9BB9-0FAA84787B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C25BF401-069D-486F-9BB9-0FAA84787B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C25BF401-069D-486F-9BB9-0FAA84787B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C25BF401-069D-486F-9BB9-0FAA84787B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91676C7F-76A1-4ECD-BB8D-69CBDE6F1728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91676C7F-76A1-4ECD-BB8D-69CBDE6F1728}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91676C7F-76A1-4ECD-BB8D-69CBDE6F1728}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91676C7F-76A1-4ECD-BB8D-69CBDE6F1728}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AE04959-4219-4859-A0B4-B70ACC2C3A6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AE04959-4219-4859-A0B4-B70ACC2C3A6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AE04959-4219-4859-A0B4-B70ACC2C3A6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AE04959-4219-4859-A0B4-B70ACC2C3A6C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04F0D69B-CBC0-4160-9110-4B9EA9CFC932}
+	EndGlobalSection
+EndGlobal
