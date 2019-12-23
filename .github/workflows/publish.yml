@@ -5,7 +5,7 @@ on:
       - master
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Bump version
@@ -22,8 +22,6 @@ jobs:
         run: dotnet build -c Release Src/Dister.Net
       - name: Pack
         run: dotnet pack -c Release /p:Version=${{ steps.next_version.outputs.version }} -o nuget Src/Dister.Net
-      - name: Setup Nuget.exe
-        uses: warrenbuckley/Setup-Nuget@v1
       - name: Publish
-        run: nuget push nuget/*.nupkg -ApiKey ${{secrets.NugetAPIKey}}
+        run: dotnet nuget push nuget/*.nupkg -k ${{secrets.NugetAPIKey}}
       
