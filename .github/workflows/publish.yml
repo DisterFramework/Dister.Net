@@ -28,4 +28,4 @@ jobs:
         run: dotnet pack -c Release -p:Version=${{ steps.next_version.outputs.version }} -o nuget Src/Dister.Net
       
       - name: Publish
-        run: dotnet nuget push nuget/*.nupkg -k ${{secrets.NugetAPIKey}}
+        run: dotnet nuget push nuget/*.nupkg -k ${{secrets.NugetAPIKey}} -s https://api.nuget.org/v3/index.json
